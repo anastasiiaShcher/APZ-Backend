@@ -1,0 +1,140 @@
+﻿using Dvor.Common.Entities;
+using Dvor.Common.Enums;
+using Dvor.Common.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace Dvor.BLL.Services
+{
+    public class OrderService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        public OrderService(IUnitOfWork unitOfWork)
+        {
+            _unitOfWork = unitOfWork;
+        }
+
+        public IList<Order> GetAll()
+        {
+            return _unitOfWork.GetRepository<Order>().GetMany(o => !o.IsDeleted, null, TrackingState.Disabled).ToList();
+        }
+
+        public Order Get(string id)
+        {
+            return _unitOfWork.GetRepository<Order>().Get(
+                c => c.OrderId.Equals(id),
+                TrackingState.Disabled,
+                "OrderDetails.Dish");
+        }
+
+        public bool IsExist(string id)
+        {
+            return _unitOfWork.GetRepository<Order>().IsExist(source => source.OrderId == id);
+        }
+
+        public void Create(Order item)
+        {
+            item.Date = DateTime.UtcNow;
+            item.Status = OrderStatus.New;
+            _unitOfWork.GetRepository<Order>().Create(item);
+            _unitOfWork.Save();
+        }
+
+        public void Update(Order item)
+        {
+            var repository = _unitOfWork.GetRepository<Order>();
+
+            if (repository.IsExist(order => order.OrderId.Equals(item.OrderId)))
+            {
+                var order = _unitOfWork.GetRepository<Order>().Get(source => source.OrderId == item.OrderId, TrackingState.Enabled, "OrderDetails.Product");
+
+                if (!order.IsDeleted)
+                {
+                    if (item.OrderDetails != null)
+                    {
+                        item.TotalValue = GetOrderValue(item.OrderDetails);
+                    }
+
+                    MapEntity(item, order);
+                    _unitOfWork.Save();
+                }
+            }
+        }
+
+        public void Delete(string id)
+        {
+            var order = _unitOfWork.GetRepository<Order>().Get(source => source.OrderId == id);
+            order.IsDeleted = true;
+            _unitOfWork.Save();
+        }
+
+        public Order GetCurrentOrder()
+        {
+            return _unitOfWork.GetRepository<Order>()
+                .Get(
+                    order => !order.IsDeleted &&
+                             order.Status == OrderStatus.New,
+                    TrackingState.Disabled,
+                    "OrderDetails.Dish");
+        }
+
+        public void AddDetails(OrderDetails orderDetails)
+        {
+            var currentOrder = GetCurrentOrder();
+
+            if (currentOrder == null)
+            {
+                var order = new Order();
+                Create(order);
+                orderDetails.OrderId = order.OrderId;
+            }
+            else
+            {
+                orderDetails.OrderId = currentOrder.OrderId;
+            }
+
+            CreateOrderDetails(orderDetails);
+            _unitOfWork.Save();
+        }
+
+        public void RemoveDetails(string id)
+        {
+            _unitOfWork.GetRepository<OrderDetails>().Delete(id);
+            _unitOfWork.Save();
+        }
+
+        private decimal GetOrderValue(IEnumerable<OrderDetails> orderDetails)
+        {
+            return orderDetails.Sum(o => o.Dish.Price * o.Quantity);
+        }
+
+        private void MapEntity(Order item, Order itemToUpdate)
+        {
+            itemToUpdate.OrderDetails.Clear();
+            itemToUpdate.OrderDetails = item.OrderDetails;
+            itemToUpdate.TotalValue = item.TotalValue;
+            itemToUpdate.Status = item.Status;
+        }
+
+        private void CreateOrderDetails(OrderDetails orderDetails)
+        {
+            var repository = _unitOfWork.GetRepository<OrderDetails>();
+            var details = repository
+                .Get(
+                    source => source.OrderId == orderDetails.OrderId &&
+                              source.DishId == orderDetails.DishId);
+
+            if (details != null)
+            {
+                details.Quantity++;
+            }
+            else
+            {
+                orderDetails.Quantity = 1;
+                repository.Create(orderDetails);
+            }
+        }
+    }
+}

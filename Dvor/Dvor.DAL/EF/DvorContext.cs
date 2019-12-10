@@ -18,5 +18,11 @@ namespace Dvor.DAL.EF
         public DbSet<DishAllergy> DishAllergies { get; set; }
 
         public DbSet<Allergy> Allergies { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<DishAllergy>()
+                .HasKey(dishAllergy => new { dishAllergy.DishId, dishAllergy.AllergyId });
+        }
     }
 }
