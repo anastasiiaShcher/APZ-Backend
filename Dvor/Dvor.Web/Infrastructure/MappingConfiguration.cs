@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 
-namespace Modular.Web.Infrastructure
+namespace Dvor.Web.Infrastructure
 {
     public class MappingConfiguration : Profile
     {

@@ -1,7 +1,10 @@
 ﻿using Autofac;
+using Dvor.Common.Interfaces;
+using Dvor.DAL.Factories;
+using Dvor.DAL.Repositories;
 using Module = Autofac.Module;
 
-namespace Modular.Web.Infrastructure.Modules
+namespace Dvor.Web.Infrastructure.Modules
 {
     public class DIModule : Module
     {
@@ -14,7 +17,8 @@ namespace Modular.Web.Infrastructure.Modules
 
             // Repositories
 
-
+            builder.RegisterType<RepositoryFactory>().As<IRepositoryFactory>().InstancePerLifetimeScope();
+            builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
 
 
             // Extra

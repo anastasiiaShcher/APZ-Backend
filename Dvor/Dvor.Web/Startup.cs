@@ -6,9 +6,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Modular.Web.Infrastructure.Modules;
 using Newtonsoft.Json;
 using System;
+using Dvor.Web.Infrastructure.Modules;
 
 namespace Dvor.Web
 {

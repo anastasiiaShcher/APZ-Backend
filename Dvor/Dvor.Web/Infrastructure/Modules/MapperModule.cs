@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Modular.Web.Infrastructure.Modules
+namespace Dvor.Web.Infrastructure.Modules
 {
     public static class MapperModule
     {
