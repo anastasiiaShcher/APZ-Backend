@@ -3,7 +3,6 @@
     public enum SortingMethod
     {
         PriceAsc,
-        PriceDesc,
-        ByDate
+        PriceDesc
     }
 }

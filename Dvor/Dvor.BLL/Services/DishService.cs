@@ -1,12 +1,16 @@
-﻿using Dvor.Common.Entities;
+﻿using Dvor.BLL.Infrastructure;
+using Dvor.Common.Entities;
 using Dvor.Common.Enums;
 using Dvor.Common.Interfaces;
+using Dvor.Common.Interfaces.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Dvor.BLL.Services
 {
-    public class DishService : IService<Dish>
+    public class DishService : IDishService
     {
         private readonly IUnitOfWork _unitOfWork;
 
@@ -50,67 +54,58 @@ namespace Dvor.BLL.Services
             _unitOfWork.Save();
         }
 
-        //public IList<Dish> GetSorted(DishSorting parameters)
-        //{
-        //    Expression<Func<Dish, bool>> param = g => !g.IsDeleted;
-        //    var conditionExpressions = new List<Expression<Func<Dish, bool>>>
-        //    {
-        //        param
-        //    };
+        public IList<Dish> GetSorted(DishSorting parameters)
+        {
+            Expression<Func<Dish, bool>> param = g => !g.IsDeleted;
+            var conditionExpressions = new List<Expression<Func<Dish, bool>>>
+            {
+                param
+            };
 
-        //    if (parameters.PriceFrom != null)
-        //    {
-        //        param = g => g.Price >= parameters.PriceFrom;
-        //        conditionExpressions.Add(param);
-        //    }
+            if (parameters.PriceFrom != null)
+            {
+                param = g => g.Price >= parameters.PriceFrom;
+                conditionExpressions.Add(param);
+            }
 
-        //    if (parameters.PriceTo != null)
-        //    {
-        //        param = g => g.Price <= parameters.PriceTo;
-        //        conditionExpressions.Add(param);
-        //    }
+            if (parameters.PriceTo != null)
+            {
+                param = g => g.Price <= parameters.PriceTo;
+                conditionExpressions.Add(param);
+            }
 
-        //    if (parameters.Materials != null && parameters.Materials.Any())
-        //    {
-        //        param = g => g.Materials
-        //            .Any(gn => parameters.Materials
-        //                .Contains(gn.MaterialId));
+            if (parameters.Allergies != null && parameters.Allergies.Any())
+            {
+                param = g => !g.Allergies
+                    .Any(gn => parameters.Allergies
+                        .Contains(gn.AllergyId));
 
-        //        conditionExpressions.Add(param);
-        //    }
+                conditionExpressions.Add(param);
+            }
 
-        //    if (!string.IsNullOrEmpty(parameters.Search))
-        //    {
-        //        param = g => g.Name.Contains(parameters.Search);
-        //        conditionExpressions.Add(param);
-        //    }
+            if (!string.IsNullOrEmpty(parameters.Search))
+            {
+                param = g => g.Name.Contains(parameters.Search);
+                conditionExpressions.Add(param);
+            }
 
-        //    if (!string.IsNullOrEmpty(parameters.Code))
-        //    {
-        //        param = g => g.Compatibility.Code == parameters.Code || g.Compatibility.Parent.Code == parameters.Code;
-        //        conditionExpressions.Add(param);
-        //    }
+            var condition = ExpressionActions.CombinePredicates(conditionExpressions, Expression.AndAlso);
+            var repository = _unitOfWork.GetRepository<Dish>();
+            var result = condition != null ? repository.GetMany(condition, null, TrackingState.Disabled, "Allergies.Allergy") : repository.GetMany(source => !source.IsDeleted, null, TrackingState.Disabled, "Allergies.Allergy");
 
-        //    var condition = ExpressionActions.CombinePredicates(conditionExpressions, Expression.AndAlso);
-        //    var repository = _unitOfWork.GetRepository<Dish>();
-        //    var result = condition != null ? repository.GetMany(condition, null, TrackingState.Disabled, "Materials.Material") : repository.GetMany(source => !source.IsDeleted, null, TrackingState.Disabled, "Materials.Material");
+            switch (parameters.SortingMethod)
+            {
+                case SortingMethod.PriceAsc:
+                    result = result.OrderBy(g => g.Price);
+                    break;
+                case SortingMethod.PriceDesc:
+                    result = result.OrderByDescending(g => g.Price);
+                    break;
+            }
 
-        //    switch (parameters.SortingMethod)
-        //    {
-        //        case SortingMethod.PriceAsc:
-        //            result = result.OrderBy(g => g.Price);
-        //            break;
-        //        case SortingMethod.PriceDesc:
-        //            result = result.OrderByDescending(g => g.Price);
-        //            break;
-        //        default:
-        //            result = result.OrderByDescending(g => g.Date);
-        //            break;
-        //    }
+            return result.ToList();
 
-        //    return result.ToList();
-
-        //}
+        }
 
         private void MapEntity(Dish item, Dish itemToUpdate)
         {
