@@ -1,19 +1,23 @@
 ﻿using Dvor.Common.Entities;
+using Dvor.Common.Entities.DTO;
 using Dvor.Common.Enums;
 using Dvor.Common.Interfaces;
+using Dvor.Common.Interfaces.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Dvor.BLL.Services
 {
-    public class OrderService
+    public class OrderService : IOrderService
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMailService _mailService;
 
-        public OrderService(IUnitOfWork unitOfWork)
+        public OrderService(IUnitOfWork unitOfWork, IMailService mailService)
         {
             _unitOfWork = unitOfWork;
+            _mailService = mailService;
         }
 
         public IList<Order> GetAll()
@@ -48,7 +52,7 @@ namespace Dvor.BLL.Services
 
             if (repository.IsExist(order => order.OrderId.Equals(item.OrderId)))
             {
-                var order = _unitOfWork.GetRepository<Order>().Get(source => source.OrderId == item.OrderId, TrackingState.Enabled, "OrderDetails.Product");
+                var order = _unitOfWork.GetRepository<Order>().Get(source => source.OrderId == item.OrderId, TrackingState.Enabled, "OrderDetails.Dish");
 
                 if (!order.IsDeleted)
                 {
@@ -80,28 +84,54 @@ namespace Dvor.BLL.Services
                     "OrderDetails.Dish");
         }
 
-        public void AddDetails(OrderDetails orderDetails)
+        public void AddDetails(OrderDetailsDTO orderDetails)
         {
             var currentOrder = GetCurrentOrder();
+            var details = new OrderDetails { DishId = orderDetails.DishId };
 
             if (currentOrder == null)
             {
                 var order = new Order();
                 Create(order);
-                orderDetails.OrderId = order.OrderId;
+                details.OrderId = order.OrderId;
             }
             else
             {
-                orderDetails.OrderId = currentOrder.OrderId;
+                details.OrderId = currentOrder.OrderId;
             }
 
-            CreateOrderDetails(orderDetails);
+            CreateOrderDetails(details);
             _unitOfWork.Save();
         }
 
         public void RemoveDetails(string id)
         {
             _unitOfWork.GetRepository<OrderDetails>().Delete(id);
+            _unitOfWork.Save();
+        }
+
+        public void Submit(string userId)
+        {
+            //getUser
+            var currentOrder = GetCurrentOrder();
+            var mailContent = $"New order for total of {currentOrder.TotalValue}. Details: ";
+            mailContent = currentOrder.OrderDetails.Aggregate(mailContent, (current, detail) => current + $"-{detail.Dish.Name} of count {detail.Quantity}\n");
+
+            var notification = new Notification
+            {
+                Title = "New Order",
+                Content = mailContent
+            };
+
+            ChangeStatus(currentOrder.OrderId, OrderStatus.Paid);
+            //user email
+            _mailService.Send("", notification);
+        }
+
+        public void ChangeStatus(string id, OrderStatus status)
+        {
+            var order = _unitOfWork.GetRepository<Order>().Get(source => source.OrderId == id);
+            order.Status = status;
             _unitOfWork.Save();
         }
 

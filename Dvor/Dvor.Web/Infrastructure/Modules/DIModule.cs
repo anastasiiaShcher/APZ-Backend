@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using Dvor.BLL.Infrastructure;
 using Dvor.BLL.Services;
 using Dvor.Common.Entities;
 using Dvor.Common.Interfaces;
@@ -27,7 +28,7 @@ namespace Dvor.Web.Infrastructure.Modules
 
             // Extra
 
-
+            builder.RegisterType<MailService>().As<IMailService>().InstancePerLifetimeScope();
         }
     }
 }
