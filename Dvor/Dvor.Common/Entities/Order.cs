@@ -16,6 +16,10 @@ namespace Dvor.Common.Entities
 
         public OrderStatus Status { get; set; }
 
+        public string UserId { get; set; }
+
+        public User User { get; set; }
+
         public bool IsDeleted { get; set; }
     }
 }

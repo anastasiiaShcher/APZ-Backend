@@ -24,11 +24,13 @@ namespace Dvor.Web.Infrastructure.Modules
             builder.RegisterType<RepositoryFactory>().As<IRepositoryFactory>().InstancePerLifetimeScope();
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
             builder.RegisterType<Repository<Dish>>().As<IRepository<Dish>>().InstancePerLifetimeScope();
+            builder.RegisterType<Repository<User>>().As<IRepository<User>>().InstancePerLifetimeScope();
 
 
             // Extra
 
             builder.RegisterType<MailService>().As<IMailService>().InstancePerLifetimeScope();
+            builder.RegisterType<JwtTokenFactory>().As<ITokenFactory>().InstancePerLifetimeScope();
         }
     }
 }

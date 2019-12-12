@@ -91,7 +91,7 @@ namespace Dvor.BLL.Services
 
             if (currentOrder == null)
             {
-                var order = new Order();
+                var order = new Order { UserId = orderDetails.UserId };
                 Create(order);
                 details.OrderId = order.OrderId;
             }
@@ -112,7 +112,7 @@ namespace Dvor.BLL.Services
 
         public void Submit(string userId)
         {
-            //getUser
+            var user = _unitOfWork.GetRepository<User>().Get(source => source.UserId == userId, TrackingState.Disabled);
             var currentOrder = GetCurrentOrder();
             var mailContent = $"New order for total of {currentOrder.TotalValue}. Details: ";
             mailContent = currentOrder.OrderDetails.Aggregate(mailContent, (current, detail) => current + $"-{detail.Dish.Name} of count {detail.Quantity}\n");
@@ -124,8 +124,7 @@ namespace Dvor.BLL.Services
             };
 
             ChangeStatus(currentOrder.OrderId, OrderStatus.Paid);
-            //user email
-            _mailService.Send("", notification);
+            _mailService.Send(user.Email, notification);
         }
 
         public void ChangeStatus(string id, OrderStatus status)
