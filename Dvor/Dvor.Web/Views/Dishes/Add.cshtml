@@ -29,6 +29,11 @@
                 @Html.LabelFor(model => model.Price, null, new { @class = "control-label" })
                 @Html.TextBoxFor(model => model.Price, null, new { @class = "form-control", type = "number", step = "1", min = "1" })
             </div>
+
+            <div class="form-group">
+                <input type="checkbox" name="IsNew" value="true" @(Model.IsNew ? "checked" : "") /> IsNew
+            </div>
+
             <div class="form-group">
                 <div>Allergies</div>
                 @foreach (var g in Model.AllAllergies)

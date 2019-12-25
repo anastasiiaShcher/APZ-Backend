@@ -7,12 +7,10 @@ namespace Dvor.Common.Entities
     {
         public SortingMethod SortingMethod { get; set; }
 
-        public string Search { get; set; }
-
-        public decimal? PriceFrom { get; set; }
-
-        public decimal? PriceTo { get; set; }
-
         public IEnumerable<string> Allergies { get; set; }
+
+        public bool NewOnly { get; set; }
+
+        public string CategoryId { get; set; }
     }
 }

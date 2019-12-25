@@ -8,5 +8,11 @@ namespace Dvor.Web.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        public IActionResult Add(string dishId, int quantity)
+        {
+            return View();
+        }
     }
 }

@@ -5,7 +5,7 @@
 
     @foreach (var category in Model)
     {
-        <a href="@Url.Action("Index", "Category", new { id = category.CategoryId })">
+        <a href="@Url.Action("Get", "Category", new { CategoryId = category.CategoryId })">
             <div class="menu__categories-item">
                 <img class="menu__categories-item__img" src="@category.ImageUrl">
                 <span class="background-category"></span>

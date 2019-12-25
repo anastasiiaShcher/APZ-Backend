@@ -62,15 +62,15 @@ namespace Dvor.BLL.Services
                 param
             };
 
-            if (parameters.PriceFrom != null)
+            if (!string.IsNullOrEmpty(parameters.CategoryId))
             {
-                param = g => g.Price >= parameters.PriceFrom;
+                param = dish => dish.CategoryId == parameters.CategoryId;
                 conditionExpressions.Add(param);
             }
 
-            if (parameters.PriceTo != null)
+            if (parameters.NewOnly)
             {
-                param = g => g.Price <= parameters.PriceTo;
+                param = dish => dish.IsNew;
                 conditionExpressions.Add(param);
             }
 
@@ -83,15 +83,11 @@ namespace Dvor.BLL.Services
                 conditionExpressions.Add(param);
             }
 
-            if (!string.IsNullOrEmpty(parameters.Search))
-            {
-                param = g => g.Name.Contains(parameters.Search);
-                conditionExpressions.Add(param);
-            }
-
             var condition = ExpressionActions.CombinePredicates(conditionExpressions, Expression.AndAlso);
             var repository = _unitOfWork.GetRepository<Dish>();
-            var result = condition != null ? repository.GetMany(condition, null, TrackingState.Disabled, "Allergies.Allergy") : repository.GetMany(source => !source.IsDeleted, null, TrackingState.Disabled, "Allergies.Allergy");
+            var result = condition != null 
+                ? repository.GetMany(condition, null, TrackingState.Disabled, "Allergies.Allergy", "Category", "Images")
+                : repository.GetMany(source => !source.IsDeleted, null, TrackingState.Disabled, "Allergies.Allergy", "Category", "Images");
 
             switch (parameters.SortingMethod)
             {

@@ -42,6 +42,7 @@ namespace Dvor.BLL.Services
         {
             item.Date = DateTime.UtcNow;
             item.Status = OrderStatus.New;
+            item.TotalValue = GetOrderValue(item.OrderDetails);
             _unitOfWork.GetRepository<Order>().Create(item);
             _unitOfWork.Save();
         }

@@ -17,6 +17,7 @@ namespace Dvor.Web.Infrastructure.Modules
             // Services
 
             builder.RegisterType<DishService>().As<IDishService>().InstancePerLifetimeScope();
+            builder.RegisterType<OrderService>().As<IOrderService>().InstancePerLifetimeScope();
             builder.RegisterType<ImageService>().As<IService<Image>>().InstancePerLifetimeScope();
 
 
@@ -29,6 +30,7 @@ namespace Dvor.Web.Infrastructure.Modules
             builder.RegisterType<Repository<Category>>().As<IRepository<Category>>().InstancePerLifetimeScope();
             builder.RegisterType<Repository<Allergy>>().As<IRepository<Allergy>>().InstancePerLifetimeScope();
             builder.RegisterType<Repository<Image>>().As<IRepository<Image>>().InstancePerLifetimeScope();
+            builder.RegisterType<Repository<Order>>().As<IRepository<Order>>().InstancePerLifetimeScope();
 
 
             // Extra

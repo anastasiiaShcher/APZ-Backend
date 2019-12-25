@@ -22,6 +22,9 @@ namespace Dvor.Web.Models
         [Required]
         public decimal Price { get; set; }
 
+        [Required]
+        public bool IsNew { get; set; }
+
         public ICollection<string> Allergies { get; set; }
 
         public IList<string> ImageUrls { get; set; }

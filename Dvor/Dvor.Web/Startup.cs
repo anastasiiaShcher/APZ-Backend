@@ -83,9 +83,13 @@ namespace Dvor.Web
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    "category",
+                    "Category/{CategoryId}", new {controller = "Category", action = "Get"});
+
+                routes.MapRoute(
                     "default",
                     "{controller=Home}/{action=Index}/{id?}");
-            });
+                });
         }
     }
 }

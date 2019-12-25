@@ -18,6 +18,8 @@ namespace Dvor.Common.Entities
 
         public bool IsDeleted { get; set; }
 
+        public bool IsNew { get; set; }
+
         public ICollection<DishAllergy> Allergies { get; set; }
 
         public ICollection<Image> Images { get; set; }
