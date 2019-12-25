@@ -21,12 +21,12 @@ namespace Dvor.BLL.Services
 
         public IList<Dish> GetAll()
         {
-            return _unitOfWork.GetRepository<Dish>().GetMany(source => !source.IsDeleted, null, TrackingState.Disabled).ToList();
+            return _unitOfWork.GetRepository<Dish>().GetMany(source => !source.IsDeleted, null, TrackingState.Disabled, "Category").ToList();
         }
 
         public Dish Get(string id)
         {
-            return _unitOfWork.GetRepository<Dish>().Get(source => source.DishId == id, TrackingState.Disabled);
+            return _unitOfWork.GetRepository<Dish>().Get(source => source.DishId == id, TrackingState.Disabled, "Category", "Allergies");
         }
 
         public bool IsExist(string id)
@@ -42,7 +42,7 @@ namespace Dvor.BLL.Services
 
         public void Update(Dish item)
         {
-            var DishToUpdate = _unitOfWork.GetRepository<Dish>().Get(source => source.DishId == item.DishId);
+            var DishToUpdate = _unitOfWork.GetRepository<Dish>().Get(source => source.DishId == item.DishId, TrackingState.Enabled, "Allergies");
             MapEntity(item, DishToUpdate);
             _unitOfWork.Save();
         }
@@ -109,7 +109,12 @@ namespace Dvor.BLL.Services
 
         public IList<Category> GetCategories()
         {
-            return _unitOfWork.GetRepository<Category>().GetAll(TrackingState.Disabled).ToList();
+            return _unitOfWork.GetRepository<Category>().GetMany(source => true, source => source.Name, TrackingState.Disabled).ToList();
+        }
+
+        public IList<Allergy> GetAllergies()
+        {
+            return _unitOfWork.GetRepository<Allergy>().GetMany(source => true, source => source.Name, TrackingState.Disabled).ToList();
         }
 
         private void MapEntity(Dish item, Dish itemToUpdate)
@@ -117,6 +122,9 @@ namespace Dvor.BLL.Services
             itemToUpdate.Name = item.Name;
             itemToUpdate.Price = item.Price;
             itemToUpdate.CategoryId = item.CategoryId;
+
+            itemToUpdate.Allergies?.Clear();
+            itemToUpdate.Allergies = item.Allergies;
         }
     }
 }

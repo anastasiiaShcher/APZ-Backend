@@ -8,6 +8,8 @@ namespace Dvor.Common.Entities
 
         public string Name { get; set; }
 
+        public string ImageUrl { get; set; }
+
         public ICollection<Dish> Dishes { get; set; }
     }
 }

@@ -8,6 +8,8 @@ namespace Dvor.Common.Entities
 
         public string Name { get; set; }
 
+        public string Description { get; set; }
+
         public string CategoryId { get; set; }
 
         public Category Category { get; set; }
@@ -17,5 +19,7 @@ namespace Dvor.Common.Entities
         public bool IsDeleted { get; set; }
 
         public ICollection<DishAllergy> Allergies { get; set; }
+
+        public ICollection<Image> Images { get; set; }
     }
 }

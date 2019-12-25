@@ -8,6 +8,8 @@ namespace Dvor.Common.Entities
 
         public string Name { get; set; }
 
+        public string Description { get; set; }
+
         public ICollection<DishAllergy> Dishes { get; set; }
     }
 }

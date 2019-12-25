@@ -1,41 +1,38 @@
-﻿<h1 class="menu__title">
-    Menu <span class="slash">/</span> <span>Second dishes</span> <img class="filter-img js-open-modal" data-modal="3" src="images/filter.svg" alt="filter">
+﻿@model IList<Dvor.Common.Entities.Dish>
+
+<h1 class="menu__title">
+    Menu <span class="slash">/</span> <span>@Model.FirstOrDefault()?.Category.Name </span> <img class="filter-img js-open-modal" data-modal="3" src="images/filter.svg" alt="filter">
 </h1>
 
 <div class="menu__categories">
 
-    <div class="menu__categories-item menu__categories-item-position">
-        <img class="menu__categories-item__img" src="images/first.jpg"></img>
-        <span class="background-category"></span>
-        <div class="menu__category-title">
-            <span class="name-category">Борщ</span>
-            <div class="category-more">
-                <span class="see-more">
-                    с луком и пампушками и ребрами и
-                    прочее описание
-                </span>
-                <div class="see-characteristics">
-                    <span>70 грн / 350мл</span>
-                </div>
+    @foreach (var dish in Model)
+    {
+        <div class="menu__categories-item menu__categories-item-position">
+            <img class="menu__categories-item__img" src="@dish.Images?.FirstOrDefault()?.Url">
+            <span class="background-category"></span>
+            <div class="menu__category-title">
+                <span class="name-category">@dish.Name</span>
+                <div class="category-more">
+                    <span class="see-more">
+                        @dish.Description
+                    </span>
+                    <div class="see-characteristics">
+                        <span>@dish.Price грн</span>
+                    </div>
 
+                </div>
+            </div>
+            <div class="select-item">
+                <P class="plus-minus">
+                    <span>-</span>
+                    <span class="count-item">1</span>
+                    <span>+</span>
+                </P>
+                <p class="choose">remove</p>
+                <!-- <p class="choose">choose</p> -->
             </div>
         </div>
-        <div class="select-item">
-            <P class="plus-minus">
-                <span>-</span>
-                <span class="count-item">1</span>
-                <span>+</span>
-            </P>
-            <p class="choose">remove</p>
-            <!-- <p class="choose">choose</p> -->
-        </div>
-    </div>
-    <div class="menu__categories-item">
-        <img class="menu__categories-item__img" src="images/second2.jpg"></img>
-        <span class="background-category"></span>
-    </div>
-    <div class="menu__categories-item">
-        <img class="menu__categories-item__img" src="images/second2.jpg"></img>
-        <span class="background-category"></span>
-    </div>
+    }
+
 </div>

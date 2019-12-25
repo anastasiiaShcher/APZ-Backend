@@ -7,5 +7,6 @@ namespace Dvor.Common.Interfaces.Services
     {
         IList<Dish> GetSorted(DishSorting parameters);
         IList<Category> GetCategories();
+        IList<Allergy> GetAllergies();
     }
 }

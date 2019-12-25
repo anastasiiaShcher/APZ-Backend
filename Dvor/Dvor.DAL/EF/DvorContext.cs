@@ -19,18 +19,29 @@ namespace Dvor.DAL.EF
 
         public DbSet<Allergy> Allergies { get; set; }
 
+        public DbSet<Image> Images { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<DishAllergy>()
                 .HasKey(dishAllergy => new { dishAllergy.DishId, dishAllergy.AllergyId });
 
             modelBuilder.Entity<Category>().HasData(
-            new Category{CategoryId = "firstDishes", Name = "First Dishes"},
-            new Category{CategoryId = "secondDishes", Name = "Second Dishes"},
-            new Category{CategoryId = "lunches", Name = "Lunches"},
-            new Category{CategoryId = "Deserts", Name = "Deserts"},
-            new Category{CategoryId = "Drinks", Name = "Drinks"},
-            new Category{CategoryId = "Salads", Name = "Salads" }
+            new Category{CategoryId = "firstDishes", Name = "First Dishes", ImageUrl = "images/first.jpg" },
+            new Category{CategoryId = "secondDishes", Name = "Second Dishes", ImageUrl = "images/second.jpg" },
+            new Category{CategoryId = "lunches", Name = "Lunches", ImageUrl = "images/lunch.jpg" },
+            new Category{CategoryId = "Desserts", Name = "Deserts", ImageUrl = "images/desserts.jpg" },
+            new Category{CategoryId = "Drinks", Name = "Drinks", ImageUrl = "images/drinks.jpg" },
+            new Category{CategoryId = "Salads", Name = "Salads", ImageUrl = "images/second2.jpg" }
+            );
+
+            modelBuilder.Entity<Allergy>().HasData(
+                new Allergy { AllergyId = "cereals", Name = "Cereals containing gluten", Description = "wheat, rye, spelt, barley, amelcorn, unripe spelt grain ..." },
+                new Allergy { AllergyId = "crustaceans", Name = "Crustaceans", Description = "crabs, lobster, crayfish, shrimp and prawn .." },
+                new Allergy { AllergyId = "egg", Name = "Egg", Description = "including products with egg" },
+                new Allergy { AllergyId = "milk", Name = "Milk", Description = "including lactose" },
+                new Allergy { AllergyId = "lupin", Name = "Lupin", Description = "flour, lupin flakes, lupinus, lupine, lupini or lupine beans..." },
+                new Allergy { AllergyId = "molluscs", Name = "Molluscs", Description = "squid, snails, clams, oysters and scallops..." }
             );
         }
     }

@@ -6,6 +6,7 @@ namespace Dvor.Web.Controllers
     {
         public IActionResult Index(string id)
         {
+
             return View();
         }
     }
