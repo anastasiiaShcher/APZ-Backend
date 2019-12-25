@@ -42,7 +42,6 @@ namespace Dvor.BLL.Services
         {
             item.Date = DateTime.UtcNow;
             item.Status = OrderStatus.New;
-            item.TotalValue = GetOrderValue(item.OrderDetails);
             _unitOfWork.GetRepository<Order>().Create(item);
             _unitOfWork.Save();
         }
@@ -88,7 +87,7 @@ namespace Dvor.BLL.Services
         public void AddDetails(OrderDetailsDTO orderDetails)
         {
             var currentOrder = GetCurrentOrder();
-            var details = new OrderDetails { DishId = orderDetails.DishId };
+            var details = new OrderDetails { DishId = orderDetails.DishId, Quantity = orderDetails.Quantity };
 
             if (currentOrder == null)
             {
@@ -102,6 +101,10 @@ namespace Dvor.BLL.Services
             }
 
             CreateOrderDetails(details);
+
+            var orderToUpdate = _unitOfWork.GetRepository<Order>().Get(order => order.OrderId == details.OrderId, TrackingState.Enabled, "OrderDetails.Dish");
+            orderToUpdate.TotalValue = GetOrderValue(GetDetailsForOrder(orderToUpdate.OrderId));
+
             _unitOfWork.Save();
         }
 
@@ -109,6 +112,22 @@ namespace Dvor.BLL.Services
         {
             _unitOfWork.GetRepository<OrderDetails>().Delete(id);
             _unitOfWork.Save();
+        }
+
+        public void UpdateDetailsCount(string id, short count)
+        {
+            var orderDetails = _unitOfWork.GetRepository<OrderDetails>().Get(source => source.OrderDetailsId == id);
+            orderDetails.Quantity = count;
+            _unitOfWork.Save();
+            var orderToUpdate = _unitOfWork.GetRepository<Order>().Get(order => order.OrderId == orderDetails.OrderId, TrackingState.Enabled, "OrderDetails.Dish");
+            orderToUpdate.TotalValue = GetOrderValue(GetDetailsForOrder(orderToUpdate.OrderId));
+            _unitOfWork.Save();
+        }
+
+        public IList<OrderDetails> GetDetailsForOrder(string id)
+        {
+            return _unitOfWork.GetRepository<OrderDetails>()
+                .GetMany(source => source.OrderId == id, null, TrackingState.Disabled, "Dish").ToList();
         }
 
         public void Submit(string userId)
@@ -125,7 +144,7 @@ namespace Dvor.BLL.Services
             };
 
             ChangeStatus(currentOrder.OrderId, OrderStatus.Paid);
-            _mailService.Send(user.Email, notification);
+            _mailService.Send("sher210400@gmail.com", notification);
         }
 
         public void ChangeStatus(string id, OrderStatus status)
@@ -158,11 +177,11 @@ namespace Dvor.BLL.Services
 
             if (details != null)
             {
-                details.Quantity++;
+                details.Quantity += orderDetails.Quantity;
             }
             else
             {
-                orderDetails.Quantity = 1;
+                orderDetails.Quantity = (short) (orderDetails.Quantity > 0 ? orderDetails.Quantity : 1);
                 repository.Create(orderDetails);
             }
         }

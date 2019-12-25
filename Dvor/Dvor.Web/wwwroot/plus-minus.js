@@ -6,8 +6,10 @@ function incrementValue(e) {
 
     if (!isNaN(currentVal)) {
         parent.find('input[name=' + fieldName + ']').val(currentVal + 1);
+        parent.find('input[name=' + fieldName + ']').change();
     } else {
         parent.find('input[name=' + fieldName + ']').val(1);
+        parent.find('input[name=' + fieldName + ']').change();
     }
 }
 
@@ -19,8 +21,10 @@ function decrementValue(e) {
 
     if (!isNaN(currentVal) && currentVal > 1) {
         parent.find('input[name=' + fieldName + ']').val(currentVal - 1);
+        parent.find('input[name=' + fieldName + ']').change();
     } else {
         parent.find('input[name=' + fieldName + ']').val(1);
+        parent.find('input[name=' + fieldName + ']').change();
     }
 }
 

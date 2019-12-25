@@ -31,6 +31,7 @@ namespace Dvor.Web.Infrastructure.Modules
             builder.RegisterType<Repository<Allergy>>().As<IRepository<Allergy>>().InstancePerLifetimeScope();
             builder.RegisterType<Repository<Image>>().As<IRepository<Image>>().InstancePerLifetimeScope();
             builder.RegisterType<Repository<Order>>().As<IRepository<Order>>().InstancePerLifetimeScope();
+            builder.RegisterType<Repository<OrderDetails>>().As<IRepository<OrderDetails>>().InstancePerLifetimeScope();
 
 
             // Extra
