@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Dvor.Web.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Dvor.Web.Controllers
 {
@@ -7,6 +8,17 @@ namespace Dvor.Web.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Login(LoginViewModel model)
+        {
+            return Ok();
         }
     }
 }

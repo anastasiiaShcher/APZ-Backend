@@ -14,10 +14,6 @@ namespace Dvor.Common.Entities
 
         public string PasswordHash { get; set; }
 
-        public string RoleId { get; set; }
-
-        public Role Role { get; set; }
-
         public ICollection<Order> Orders { get; set; }
 
         public bool IsDeleted { get; set; }
