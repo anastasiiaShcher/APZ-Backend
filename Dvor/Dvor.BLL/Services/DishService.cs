@@ -107,6 +107,11 @@ namespace Dvor.BLL.Services
 
         }
 
+        public IList<Category> GetCategories()
+        {
+            return _unitOfWork.GetRepository<Category>().GetAll(TrackingState.Disabled).ToList();
+        }
+
         private void MapEntity(Dish item, Dish itemToUpdate)
         {
             itemToUpdate.Name = item.Name;

@@ -14,6 +14,6 @@ namespace Dvor.Common.Interfaces.Services
 
         void Submit(string userId);
 
-        void ChangeStatus(string id, OrderStatus status)
+        void ChangeStatus(string id, OrderStatus status);
     }
 }

@@ -23,6 +23,15 @@ namespace Dvor.DAL.EF
         {
             modelBuilder.Entity<DishAllergy>()
                 .HasKey(dishAllergy => new { dishAllergy.DishId, dishAllergy.AllergyId });
+
+            modelBuilder.Entity<Category>().HasData(
+            new Category{CategoryId = "firstDishes", Name = "First Dishes"},
+            new Category{CategoryId = "secondDishes", Name = "Second Dishes"},
+            new Category{CategoryId = "lunches", Name = "Lunches"},
+            new Category{CategoryId = "Deserts", Name = "Deserts"},
+            new Category{CategoryId = "Drinks", Name = "Drinks"},
+            new Category{CategoryId = "Salads", Name = "Salads" }
+            );
         }
     }
 }

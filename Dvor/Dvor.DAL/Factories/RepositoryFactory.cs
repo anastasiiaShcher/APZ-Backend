@@ -1,4 +1,7 @@
-﻿namespace Dvor.DAL.Factories
+﻿using Autofac;
+using Dvor.Common.Interfaces;
+
+namespace Dvor.DAL.Factories
 {
     public class RepositoryFactory : IRepositoryFactory
     {

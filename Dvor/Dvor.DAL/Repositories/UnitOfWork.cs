@@ -1,11 +1,14 @@
-﻿namespace Dvor.DAL.Repositories
+﻿using Dvor.Common.Interfaces;
+using Dvor.DAL.EF;
+
+namespace Dvor.DAL.Repositories
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly ModularContext _db;
+        private readonly DvorContext _db;
         private readonly IRepositoryFactory _repositoryFactory;
 
-        public UnitOfWork(ModularContext context, IRepositoryFactory repositoryFactory)
+        public UnitOfWork(DvorContext context, IRepositoryFactory repositoryFactory)
         {
             _db = context;
             _repositoryFactory = repositoryFactory;
