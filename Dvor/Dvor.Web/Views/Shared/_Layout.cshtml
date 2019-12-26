@@ -98,7 +98,16 @@
 
     <!-- Подложка под модальным окном -->
     <div class="overlay js-overlay-modal"></div>
-    <script src="~/js.js"></script>
+<script src="~/js.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.js"></script>
+<script>
+    document.getElementById("call-waiter").addEventListener("click", function() {
+        $.ajax({
+            type: "POST",
+            url: "@Url.Action("CallWaiter", "Home")"
+        });
+    });
+</script>
     @RenderSection("Scripts", false)
 </body>
 

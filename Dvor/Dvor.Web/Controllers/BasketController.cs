@@ -1,4 +1,6 @@
-﻿using System.Security.Claims;
+﻿using System.Collections.Generic;
+using System.Security.Claims;
+using Dvor.Common.Entities;
 using Dvor.Common.Entities.DTO;
 using Dvor.Common.Interfaces.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -18,7 +20,7 @@ namespace Dvor.Web.Controllers
         [Authorize]
         public IActionResult Index()
         {
-            var currentOrder = _orderService.GetCurrentOrder();
+            var currentOrder = _orderService.GetCurrentOrder(User.FindFirst(ClaimTypes.NameIdentifier).Value) ?? new Order{OrderDetails = new List<OrderDetails>()};
 
             return View(currentOrder);
         }
@@ -30,7 +32,8 @@ namespace Dvor.Web.Controllers
             var orderDetailsDto = new OrderDetailsDTO
             {
                 DishId = dishId,
-                Quantity = quantity
+                Quantity = quantity,
+                UserId = User.FindFirst(ClaimTypes.NameIdentifier).Value
             };
 
             _orderService.AddDetails(orderDetailsDto);

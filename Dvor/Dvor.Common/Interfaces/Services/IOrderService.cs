@@ -7,7 +7,7 @@ namespace Dvor.Common.Interfaces.Services
 {
     public interface IOrderService : IService<Order>
     {
-        Order GetCurrentOrder();
+        Order GetCurrentOrder(string userId);
 
         void AddDetails(OrderDetailsDTO orderDetails);
 

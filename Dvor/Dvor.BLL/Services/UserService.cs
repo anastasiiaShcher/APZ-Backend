@@ -25,7 +25,7 @@ namespace Dvor.BLL.Services
 
         public User Get(string id)
         {
-            return _unitOfWork.GetRepository<User>().Get(g => g.UserId == id, TrackingState.Disabled);
+            return _unitOfWork.GetRepository<User>().Get(g => g.UserId == id, TrackingState.Disabled, "Allergies");
         }
 
         public bool IsExist(string id)
@@ -71,7 +71,7 @@ namespace Dvor.BLL.Services
         {
             itemToUpdate.Name = item.Name;
 
-            itemToUpdate.Allergies.Clear();
+            itemToUpdate.Allergies?.Clear();
             itemToUpdate.Allergies = item.Allergies;
         }
     }

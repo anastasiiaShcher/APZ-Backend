@@ -28,7 +28,13 @@ namespace Dvor.Web.Controllers
         public IActionResult Index()
         {
             var allergies = _dishService.GetAllergies();
-            var userViewModel = new UserViewModel { AllAllergies = allergies };
+            var user = _userService.Get(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+            var userViewModel = new UserViewModel
+            {
+                AllAllergies = allergies,
+                UserAllergies = user.Allergies.Select(source => source.AllergyId).ToList(),
+                Name = user.Name
+            };
 
             return View(userViewModel);
         }
@@ -40,13 +46,15 @@ namespace Dvor.Web.Controllers
             if (ModelState.IsValid)
             {
                 var user = _userService.Get(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-                user.Allergies = model.Allergies.Select(allergy => new UserAllergy { UserId = user.UserId, AllergyId = allergy }).ToList();
+                user.Allergies = model.check1.Select(allergy => new UserAllergy { UserId = user.UserId, AllergyId = allergy }).ToList();
                 user.Name = model.Name;
                 _userService.Update(user);
             }
 
             var allergies = _dishService.GetAllergies();
+            var userFromDb = _userService.Get(User.FindFirst(ClaimTypes.NameIdentifier).Value);
             model.AllAllergies = allergies;
+            model.UserAllergies = userFromDb.Allergies.Select(source => source.AllergyId).ToList();
 
             return View(model);
         }
@@ -103,6 +111,7 @@ namespace Dvor.Web.Controllers
             return View(model);
         }
 
+        [Authorize]
         public IActionResult EditAllergies()
         {
             var allergies = _dishService.GetAllergies();
@@ -112,10 +121,10 @@ namespace Dvor.Web.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult EditAllergies(IList<string> allergies)
+        public IActionResult EditAllergies(IList<string> check1)
         {
             var user = _userService.Get(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-            user.Allergies = allergies.Select(allergy => new UserAllergy {UserId = user.UserId, AllergyId = allergy}).ToList();
+            user.Allergies = check1.Select(allergy => new UserAllergy {UserId = user.UserId, AllergyId = allergy}).ToList();
             _userService.Update(user);
 
             return RedirectToAction("Index", "Home");

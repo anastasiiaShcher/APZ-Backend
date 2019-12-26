@@ -3,7 +3,6 @@ using Autofac.Extensions.DependencyInjection;
 using Dvor.DAL.EF;
 using Dvor.Web.Infrastructure;
 using Dvor.Web.Infrastructure.Modules;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System;
 using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Dvor.Web
 {
@@ -31,13 +31,12 @@ namespace Dvor.Web
             services.AddDbContext<DvorContext>(options => options.UseSqlServer(connection));
 
             var apiAuthSettings = AuthOperator.AddApiAuthSettings(_configuration, services);
-
-            var cookieAuthSettings = CookieOperator.AddCookieAuthSettings(_configuration, services);
+            var cookieAuthSettings = AuthOperator.AddCookieAuthSettings(_configuration, services);
 
             services
                 .AddAuthentication(options =>
                 {
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 })
                 .AddCookie(options =>
                 {
@@ -89,6 +88,8 @@ namespace Dvor.Web
             }
 
             app.UseStaticFiles();
+            app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseHttpsRedirection();
 
             app.UseMvc(routes =>

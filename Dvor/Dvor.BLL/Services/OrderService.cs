@@ -74,19 +74,20 @@ namespace Dvor.BLL.Services
             _unitOfWork.Save();
         }
 
-        public Order GetCurrentOrder()
+        public Order GetCurrentOrder(string userId)
         {
             return _unitOfWork.GetRepository<Order>()
                 .Get(
-                    order => !order.IsDeleted &&
-                             order.Status == OrderStatus.New,
+                    order => !order.IsDeleted 
+                             && order.Status == OrderStatus.New 
+                             && order.UserId == userId,
                     TrackingState.Disabled,
                     "OrderDetails.Dish");
         }
 
         public void AddDetails(OrderDetailsDTO orderDetails)
         {
-            var currentOrder = GetCurrentOrder();
+            var currentOrder = GetCurrentOrder(orderDetails.UserId);
             var details = new OrderDetails { DishId = orderDetails.DishId, Quantity = orderDetails.Quantity };
 
             if (currentOrder == null)
@@ -132,8 +133,9 @@ namespace Dvor.BLL.Services
 
         public void Submit(string userId)
         {
-            var currentOrder = GetCurrentOrder();
-            var mailContent = $"New order for total of {currentOrder.TotalValue}. Details: ";
+            var currentOrder = GetCurrentOrder(userId);
+            var user = _unitOfWork.GetRepository<User>().Get(source => source.UserId == userId, TrackingState.Disabled);
+            var mailContent = $"New order for user '{user.Name}' with total of {currentOrder.TotalValue}. Details: ";
             mailContent = currentOrder.OrderDetails.Aggregate(mailContent, (current, detail) => current + $"-{detail.Dish.Name} of count {detail.Quantity}\n");
 
             var notification = new Notification
@@ -188,7 +190,7 @@ namespace Dvor.BLL.Services
             }
             else
             {
-                orderDetails.Quantity = (short) (orderDetails.Quantity > 0 ? orderDetails.Quantity : 1);
+                orderDetails.Quantity = (short)(orderDetails.Quantity > 0 ? orderDetails.Quantity : 1);
                 repository.Create(orderDetails);
             }
         }

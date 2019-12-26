@@ -11,8 +11,10 @@ namespace Dvor.Web.Models
         [StringLength(25, MinimumLength = 2, ErrorMessage = "Full name length must be between 2 and 25 symbols")]
         public string Name { get; set; }
 
-        public IList<string> Allergies { get; set; }
+        public IList<string> check1 { get; set; }
 
         public IList<Allergy> AllAllergies { get; set; }
+
+        public IList<string> UserAllergies { get; set; }
     }
 }
