@@ -13,7 +13,5 @@ namespace Dvor.Web.Models
         [DataType(DataType.Password)]
         [Display(Name = "Password")]
         public string Password { get; set; }
-
-        public string Name { get; set; }
     }
 }

@@ -8,13 +8,13 @@ namespace Dvor.Common.Entities
 
         public string Name { get; set; }
 
-        public bool IsBanned { get; set; }
-
         public string Email { get; set; }
 
         public string PasswordHash { get; set; }
 
         public ICollection<Order> Orders { get; set; }
+
+        public ICollection<UserAllergy> Allergies { get; set; }
 
         public bool IsDeleted { get; set; }
     }

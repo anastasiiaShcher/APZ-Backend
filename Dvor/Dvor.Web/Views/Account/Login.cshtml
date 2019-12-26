@@ -1,0 +1,21 @@
+﻿@model Dvor.Web.Models.LoginViewModel
+
+<h1 class="menu__title">
+    Profile <span class="menu__title--add">
+        If you have an account, enter your
+        login and password
+    </span> <a href="@Url.Action("Register")" class="menu__title--add link">Or register an account</a>
+</h1>
+
+<div class="register-form">
+    @Html.ValidationSummary()
+    <form action="#" method="post">
+        <label class="register__label" for="email">Email:</label>
+        @Html.TextBoxFor(model => model.Email, new {id = "email", type = "email", @class = "register__input", placeholder = "Enter your Email"})
+
+        <label class="register__label" for="password">Password:</label>
+        @Html.TextBoxFor(model => model.Email, new {id = "password", type = "password", @class = "register__input", placeholder = "Enter your password"})
+
+        <button type="submit" class="button-order">Сonfirm</button>
+    </form>
+</div>

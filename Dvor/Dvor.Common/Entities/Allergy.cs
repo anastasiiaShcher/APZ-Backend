@@ -10,6 +10,10 @@ namespace Dvor.Common.Entities
 
         public string Description { get; set; }
 
+        public string Image { get; set; }
+
         public ICollection<DishAllergy> Dishes { get; set; }
+
+        public ICollection<UserAllergy> Users { get; set; }
     }
 }

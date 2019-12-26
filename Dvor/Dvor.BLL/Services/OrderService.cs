@@ -132,7 +132,6 @@ namespace Dvor.BLL.Services
 
         public void Submit(string userId)
         {
-            var user = _unitOfWork.GetRepository<User>().Get(source => source.UserId == userId, TrackingState.Disabled);
             var currentOrder = GetCurrentOrder();
             var mailContent = $"New order for total of {currentOrder.TotalValue}. Details: ";
             mailContent = currentOrder.OrderDetails.Aggregate(mailContent, (current, detail) => current + $"-{detail.Dish.Name} of count {detail.Quantity}\n");
@@ -145,6 +144,14 @@ namespace Dvor.BLL.Services
 
             ChangeStatus(currentOrder.OrderId, OrderStatus.Paid);
             _mailService.Send("sher210400@gmail.com", notification);
+
+            foreach (var currentOrderOrderDetails in currentOrder.OrderDetails)
+            {
+
+                _unitOfWork.GetRepository<Dish>().Get(source => source.DishId == currentOrderOrderDetails.DishId).OrderedCount++;
+                _unitOfWork.Save();
+            }
+
         }
 
         public void ChangeStatus(string id, OrderStatus status)

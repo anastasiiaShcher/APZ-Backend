@@ -1,5 +1,7 @@
-﻿using Dvor.Common.Entities.DTO;
+﻿using System.Security.Claims;
+using Dvor.Common.Entities.DTO;
 using Dvor.Common.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dvor.Web.Controllers
@@ -13,6 +15,7 @@ namespace Dvor.Web.Controllers
             _orderService = orderService;
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             var currentOrder = _orderService.GetCurrentOrder();
@@ -21,6 +24,7 @@ namespace Dvor.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(string dishId, short quantity)
         {
             var orderDetailsDto = new OrderDetailsDTO
@@ -34,6 +38,7 @@ namespace Dvor.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public IActionResult RemoveDetails(string id)
         {
             _orderService.RemoveDetails(id);
@@ -42,6 +47,7 @@ namespace Dvor.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult ChangeCount(string id, short quantity)
         {
             _orderService.UpdateDetailsCount(id, quantity);
@@ -49,10 +55,10 @@ namespace Dvor.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize]
         public IActionResult Submit()
         {
-            //
-            _orderService.Submit("");
+            _orderService.Submit(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             return RedirectToAction("Index", "Home");
         }

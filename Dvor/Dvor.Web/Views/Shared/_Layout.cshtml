@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -28,10 +29,10 @@
                             <span>Table:</span><span>2T</span>
                         </div>
                         <div class="head__item head__item-top">
-                            <span>Date:</span><span>12/11/19</span>
+                            <span>Date:</span><span>@DateTime.Now.ToShortDateString()</span>
                         </div>
                         <div class="head__item head__item-top">
-                            <span>Name:</span><span>Anastasiia</span>
+                            <span>Name:</span><span>@(User.Identity.IsAuthenticated ? User.FindFirst(ClaimTypes.Name).Value : "Unauthorized")</span>
                         </div>
                     </div>
                     <a class="head__right-side" href="@Url.Action("Index", "Account")">

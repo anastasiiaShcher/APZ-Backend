@@ -32,10 +32,19 @@ namespace Dvor.Web
 
             var apiAuthSettings = AuthOperator.AddApiAuthSettings(_configuration, services);
 
+            var cookieAuthSettings = CookieOperator.AddCookieAuthSettings(_configuration, services);
+
             services
                 .AddAuthentication(options =>
                 {
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddCookie(options =>
+                {
+                    options.SlidingExpiration = true;
+                    options.LoginPath = "/Account/Login";
+                    options.AccessDeniedPath = "/Account/AccessDenied";
+                    options.ExpireTimeSpan = TimeSpan.FromSeconds(cookieAuthSettings.ExpirationTimeInSeconds);
                 })
                 .AddJwtBearer(options =>
                 {
@@ -51,6 +60,8 @@ namespace Dvor.Web
                         ValidateAudience = false
                     };
                 });
+
+            services.AddAuthorization();
 
             MapperModule.Configure(services);
 

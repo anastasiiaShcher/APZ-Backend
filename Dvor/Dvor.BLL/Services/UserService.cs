@@ -28,6 +28,11 @@ namespace Dvor.BLL.Services
             return _unitOfWork.GetRepository<User>().Get(g => g.UserId == id, TrackingState.Disabled);
         }
 
+        public bool IsExist(string id)
+        {
+            return _unitOfWork.GetRepository<User>().IsExist(source => source.UserId == id);
+        }
+
         public void Create(User item)
         {
             var passwordHash = Crypto.HashPassword(item.PasswordHash);
@@ -38,28 +43,36 @@ namespace Dvor.BLL.Services
 
         public void Update(User item)
         {
-            var user = Get(item.UserId);
             var repository = _unitOfWork.GetRepository<User>();
 
-            if (repository.IsExist(us => us.UserId.Equals(item.UserId)) && !user.IsDeleted)
+            if (repository.IsExist(us => us.UserId.Equals(item.UserId)))
             {
-                var oldItem = Get(item.UserId);
-                repository.Update(item);
+                var user = repository.Get(source => source.UserId == item.UserId);
+                MapEntities(item, user);
+
                 _unitOfWork.Save();
             }
         }
 
         public void Delete(string id)
         {
-            var user = Get(id);
+            var user = _unitOfWork.GetRepository<User>().Get(source => source.UserId == id);
             user.IsDeleted = true;
-            Update(user);
+            _unitOfWork.Save();
         }
 
         public User GetByEmail(string email)
         {
             return _unitOfWork.GetRepository<User>()
                 .Get(u => u.Email.Equals(email), TrackingState.Disabled);
+        }
+
+        private void MapEntities(User item, User itemToUpdate)
+        {
+            itemToUpdate.Name = item.Name;
+
+            itemToUpdate.Allergies.Clear();
+            itemToUpdate.Allergies = item.Allergies;
         }
     }
 }

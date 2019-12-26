@@ -97,6 +97,9 @@ namespace Dvor.BLL.Services
                 case SortingMethod.PriceDesc:
                     result = result.OrderByDescending(g => g.Price);
                     break;
+                case SortingMethod.Popular:
+                    result = result.OrderByDescending(g => g.OrderedCount);
+                    break;
             }
 
             return result.ToList();

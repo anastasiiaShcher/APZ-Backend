@@ -7,6 +7,7 @@ using Dvor.Common.Entities;
 using Dvor.Common.Interfaces;
 using Dvor.Common.Interfaces.Services;
 using Dvor.Web.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -32,6 +33,7 @@ namespace Dvor.Web.Controllers
             _cloudinary = new Cloudinary(account);
         }
 
+        [Authorize]
         public IActionResult Index()
         {
             var dishes = _dishService.GetAll();
@@ -39,6 +41,7 @@ namespace Dvor.Web.Controllers
             return View(dishes);
         }
 
+        [Authorize]
         public IActionResult Add()
         {
             var categories = _dishService.GetCategories();
@@ -49,6 +52,7 @@ namespace Dvor.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(DishCreationViewModel model, IEnumerable<IFormFile> images)
         {
             if (ModelState.IsValid)
@@ -91,6 +95,7 @@ namespace Dvor.Web.Controllers
             return View(dishCreationViewModel);
         }
 
+        [Authorize]
         public IActionResult Edit(string id)
         {
             var dish = _dishService.Get(id);
@@ -107,6 +112,7 @@ namespace Dvor.Web.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Edit(DishCreationViewModel model)
         {
             if (ModelState.IsValid)
@@ -123,6 +129,7 @@ namespace Dvor.Web.Controllers
             return View("Add", model);
         }
 
+        [Authorize]
         public IActionResult Delete(string id)
         {
             var dish = _dishService.Get(id);

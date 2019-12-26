@@ -1,25 +1,22 @@
-﻿@model Dvor.Web.Models.UserViewModel
+﻿@model IList<Dvor.Common.Entities.Allergy>
 
 <h1 class="menu__title">
     Profile <span class="menu__title--add">
-        Please, add your personal
+        Please, add your allergies
         information
     </span>
 </h1>
 
 <div class="register-form">
-    @Html.ValidationSummary()
     <form action="#" method="post">
-        <label class="register__label" for="name">Name:</label>
-        @Html.TextBoxFor(model => model.Name, new { @class = "register__input", placeholder = "Enter your name" })
+
         <label class="register__label" for="allergies">Allergies:</label>
         <div class="block-chosen-dishes">
-
-            @foreach (var allergy in Model.AllAllergies)
+            @foreach (var allergy in Model)
             {
                 <div class="chosen-dishes">
                     <p class="dishes-name">@allergy.Name</p>
-                    <img class="alergy-img" src="@allergy.Image" alt="wheat">
+                    <img class="alergy-img" src="@allergy.Image">
                     <p class="dishes-describe">
                         @allergy.Description
                     </p>

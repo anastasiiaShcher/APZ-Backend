@@ -20,6 +20,8 @@ namespace Dvor.Common.Entities
 
         public bool IsNew { get; set; }
 
+        public int OrderedCount { get; set; }
+
         public ICollection<DishAllergy> Allergies { get; set; }
 
         public ICollection<Image> Images { get; set; }
